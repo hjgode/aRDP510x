@@ -76,31 +76,31 @@ public class RemoteRdpPointerNul extends RemotePointer {
 
     @Override
     public void moveMouse (int x, int y, int metaState) {
-        return;
-//        pointerMask = MOUSE_BUTTON_MOVE | prevPointerMask;
-//        sendPointerEvent (x, y, metaState, true);
+
+        pointerMask = MOUSE_BUTTON_MOVE | prevPointerMask;
+        sendPointerEvent (x, y, metaState, true);
     }
 
     @Override
     public void moveMouseButtonDown (int x, int y, int metaState) {
-        return;
-//        pointerMask = MOUSE_BUTTON_MOVE | POINTER_DOWN_MASK;
-//        sendPointerEvent (x, y, metaState, true);
+//        return;
+        pointerMask = MOUSE_BUTTON_MOVE | POINTER_DOWN_MASK;
+        sendPointerEvent (x, y, metaState, true);
     }
 
     @Override
     public void moveMouseButtonUp (int x, int y, int metaState) {
-        return;
-//        pointerMask = MOUSE_BUTTON_MOVE;
-//        sendPointerEvent (x, y, metaState, true);
+//        return;
+        pointerMask = MOUSE_BUTTON_MOVE;
+        sendPointerEvent (x, y, metaState, true);
     }
 
     @Override
     public void releaseButton(int x, int y, int metaState) {
-        return;
-//        pointerMask = MOUSE_BUTTON_MOVE;
-//        sendPointerEvent (x, y, metaState, false);
-//        prevPointerMask = 0;
+//         return;
+        pointerMask = MOUSE_BUTTON_MOVE;
+        sendPointerEvent (x, y, metaState, false);
+        prevPointerMask = 0;
     }
 
     /**
@@ -112,8 +112,8 @@ public class RemoteRdpPointerNul extends RemotePointer {
      */
     private void sendPointerEvent(int x, int y, int metaState, boolean isMoving) {
         canvas.invalidateMousePosition();
-        return;
-/*
+/*        return;
+ */
         int combinedMetaState = metaState|canvas.getKeyboard().getMetaState();
 
         // Save the previous pointer mask other than action_move, so we can
@@ -146,7 +146,7 @@ public class RemoteRdpPointerNul extends RemotePointer {
         canvas.invalidateMousePosition();
 
         protocomm.writePointerEvent(pointerX, pointerY, combinedMetaState, pointerMask, false);
-*/
+
     }
 
 }

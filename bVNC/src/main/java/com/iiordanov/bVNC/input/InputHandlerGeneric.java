@@ -570,7 +570,7 @@ abstract class InputHandlerGeneric extends GestureDetector.SimpleOnGestureListen
 	 */
 	@Override
 	public boolean onScale(ScaleGestureDetector detector) {
-		GeneralUtils.debugLog(debugLogging, TAG, "onScale");
+		GeneralUtils.debugLog(debugLogging, TAG, "onScale");  //scaling should be disabled in kioskmode
 		boolean eventConsumed = true;
 
 		// Get the current focus.

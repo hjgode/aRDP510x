@@ -21,6 +21,7 @@
 package com.iiordanov.bVNC.input;
 
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 
 import com.iiordanov.bVNC.RemoteCanvas;
 import com.iiordanov.bVNC.RemoteCanvasActivity;
@@ -30,12 +31,16 @@ import com.undatech.remoteClientUi.*;
 public class InputHandlerDirectDragPan extends InputHandlerGeneric {
 	static final String TAG = "InputHandlerDirectDragPan";
 	public static final String ID = "TOUCH_ZOOM_MODE_DRAG_PAN";
-	
+	private  boolean bKioskMode=false; //added for kioskmode
+
 	public InputHandlerDirectDragPan(RemoteCanvasActivity activity, RemoteCanvas canvas,
 									 RemotePointer pointer, boolean debugLogging) {
 		super(activity, canvas, pointer, debugLogging);
 	}
 
+	public void setKioskMode(){
+		this.bKioskMode=true; //kioskmode
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see com.iiordanov.bVNC.input.InputHandler#getDescription()
@@ -68,7 +73,8 @@ public class InputHandlerDirectDragPan extends InputHandlerGeneric {
 
 		activity.sendShortVibration();
 
-		canvas.displayShortToastMessage(activity.getString(R.string.panning));
+		if(!this.bKioskMode)
+			canvas.displayShortToastMessage(activity.getString(R.string.panning)); //do not show in kioskmode
 		endDragModesAndScrolling();
 		panMode = true;
 	}
@@ -120,5 +126,14 @@ public class InputHandlerDirectDragPan extends InputHandlerGeneric {
 		}
         canvas.movePanToMakePointerVisible();
 		return true;
+	}
+
+	@Override
+	public boolean onScale(ScaleGestureDetector detector) {
+		GeneralUtils.debugLog(debugLogging, TAG, "onScale");  //scaling should be disabled in kioskmode
+		if(this.bKioskMode)
+			return true; //do nothing in kioskmode
+		else
+			return super.onScale(detector);
 	}
 }

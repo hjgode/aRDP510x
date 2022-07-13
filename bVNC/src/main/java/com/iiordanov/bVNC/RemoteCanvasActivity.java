@@ -130,7 +130,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     private Connection connection;
     public static final int[] inputModeIds = { R.id.itemInputTouchpad,
                                                 R.id.itemInputTouchPanZoomMouse,
-                                                R.id.itemInputDragPanZoomMouse,
+                                                R.id.itemInputDragPanZoomMouse, //Direct, pan mode, preset for kiosk mode
                                                 R.id.itemInputSingleHanded };
     private static final int scalingModeIds[] = { R.id.itemZoomable, R.id.itemFitToScreen,
                                                   R.id.itemOneToOne};
@@ -139,7 +139,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     static {
         Map<Integer, String> temp = new HashMap<>();
         temp.put(R.id.itemInputTouchpad, InputHandlerTouchpad.ID);
-        temp.put(R.id.itemInputDragPanZoomMouse, InputHandlerDirectDragPan.ID);
+        temp.put(R.id.itemInputDragPanZoomMouse, InputHandlerDirectDragPan.ID); //Direct, pan mode, preset for kiosk mode
         temp.put(R.id.itemInputTouchPanZoomMouse, InputHandlerDirectSwipePan.ID);
         temp.put(R.id.itemInputSingleHanded, InputHandlerSingleHanded.ID);
         inputModeMap = Collections.unmodifiableMap(temp);
@@ -461,6 +461,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
         toolbar.getBackground().setAlpha(64);
         toolbar.setLayoutParams(params);
         setSupportActionBar(toolbar);
+
         showToolbar();
     }
 
@@ -956,10 +957,10 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                 return false;
             }
         });
-/*
+
         if(connection.getKioskMode()) //kioskmode
             layoutKeys.setVisibility(View.GONE);
-*/
+
 
     }
 
@@ -1228,6 +1229,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             inputModeMenuItems = new MenuItem[inputModeIds.length];
             for (int i = 0; i < inputModeIds.length; i++) {
                 inputModeMenuItems[i] = inputMenu.findItem(inputModeIds[i]);
+
             }
             updateInputMenu();
             
@@ -1318,6 +1320,8 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                         inputModeHandlers[i] = new InputHandlerDirectSwipePan(this, canvas, canvas.getPointer(), App.debugLog);
                     } else if (id == R.id.itemInputDragPanZoomMouse) {
                         inputModeHandlers[i] = new InputHandlerDirectDragPan(this, canvas, canvas.getPointer(), App.debugLog);
+                        if(connection.getKioskMode())
+                            ((InputHandlerDirectDragPan)inputModeHandlers[i]).setKioskMode(); //set kioskmode to disable two finger zoom
                     } else if (id == R.id.itemInputTouchpad) {
                         inputModeHandlers[i] = new InputHandlerTouchpad(this, canvas, canvas.getPointer(), App.debugLog);
                     } else if (id == R.id.itemInputSingleHanded) {
@@ -1427,6 +1431,10 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
             return true;
         } else {
             boolean inputModeSet = setInputMode(item.getItemId());
+            if(connection.getKioskMode()){ //kioskmode
+                inputModeSet=setInputMode(R.id.inputMethodDirectDragPan);
+                return inputModeSet;
+            }
             item.setChecked(inputModeSet);
             if (inputModeSet) {
                 return inputModeSet;
@@ -1618,13 +1626,17 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
     public void showToolbar() {
 
         if (connection.getKioskMode()) { //in kioskmode hide softToolbar
+            getSupportActionBar().hide();
             handler.removeCallbacks(toolbarHider);
             handler.postAtTime(toolbarHider, SystemClock.uptimeMillis() + hideToolbarDelay);
 
-            // in kioskmode show the soft keyboard but no Toolbar
+            // in kioskmode show the extra keys keyboard but no Toolbar
+/*
             extraKeysHidden = false;
-            setExtraKeysVisibility(View.VISIBLE, true);
+            setExtraKeysVisibility(View.VISIBLE, true); //kioskmode
             relayoutViews(rootView);
+*/
+
             return;
         }
 
