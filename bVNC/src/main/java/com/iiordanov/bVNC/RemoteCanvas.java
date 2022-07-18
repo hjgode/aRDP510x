@@ -112,7 +112,7 @@ import javax.security.auth.login.LoginException;
 public class RemoteCanvas extends AppCompatImageView
         implements Viewable, GetTextFragment.OnFragmentDismissedListener {
     private final static String TAG = "RemoteCanvas";
-    boolean bKioskMode=false;
+    boolean bKioskMode=false; //kioskmode
     public AbstractScaling canvasZoomer;
 
     // Variable indicating that we are currently scrolling in simulated touchpad mode.
@@ -1755,6 +1755,10 @@ public class RemoteCanvas extends AppCompatImageView
      * Invalidates (to redraw) the location of the remote pointer.
      */
     public void invalidateMousePosition() {
+        if (bKioskMode){ //kioskmode
+            return;
+        }
+        Log.i(TAG, "softCursorMove");
         if (myDrawable != null) {
             myDrawable.moveCursorRect(pointer.getX(), pointer.getY());
             RectF r = myDrawable.getCursorRect();
@@ -1789,15 +1793,15 @@ public class RemoteCanvas extends AppCompatImageView
      */
     synchronized void softCursorMove(int x, int y) {
         Log.d(TAG, "softCursorMove: ...");
-/*
-        if (connection.getKioskMode()) { //kioskmode
-            invalidateMousePosition();
+
+        if (bKioskMode) { //kioskmode
             return;
         }
-*/
+
         Log.d(TAG, "softCursorMove: kioskmode on");
         if (myDrawable.isNotInitSoftCursor() && connection.getUseLocalCursor() != Constants.CURSOR_FORCE_DISABLE) {
-            initializeSoftCursor();
+            if(!bKioskMode) //kiosmode code should not come to here
+                initializeSoftCursor();
         }
 
 

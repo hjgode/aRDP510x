@@ -1321,7 +1321,7 @@ public class RemoteCanvasActivity extends AppCompatActivity implements OnKeyList
                     } else if (id == R.id.itemInputDragPanZoomMouse) {
                         inputModeHandlers[i] = new InputHandlerDirectDragPan(this, canvas, canvas.getPointer(), App.debugLog);
                         if(connection.getKioskMode())
-                            ((InputHandlerDirectDragPan)inputModeHandlers[i]).setKioskMode(); //set kioskmode to disable two finger zoom
+                            ((InputHandlerDirectDragPan)inputModeHandlers[i]).setKioskMode(); //set kioskmode to disable two finger zoom and force DirectMovePan mode
                     } else if (id == R.id.itemInputTouchpad) {
                         inputModeHandlers[i] = new InputHandlerTouchpad(this, canvas, canvas.getPointer(), App.debugLog);
                     } else if (id == R.id.itemInputSingleHanded) {
